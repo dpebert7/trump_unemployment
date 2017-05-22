@@ -1,0 +1,36 @@
+
+		body {
+			width: 80%;
+			margin: auto;
+			font-family: sans-serif;
+		}
+		h1 {
+			text-align: center;
+		}
+		#tipHolder {
+			padding: 2%;
+			background: #eee;
+		}
+		#tipLocation {
+			font-weight: bold;
+			text-transform: uppercase;
+		}
+		#tipDate {
+			display: block;
+			color: #c00;
+			font-size: 80%;
+			margin: 5px 0;
+		}
+		#tipRate {
+			color: #888;
+		}
+		#tipRate::before {
+			content: "("
+		}
+		#tipRate::after {
+			content: "%)"
+		}
+		#tipContent {
+			display: block;
+			color: #225;
+		}
