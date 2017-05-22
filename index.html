@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Trump Unemployment Index / Federal Unemployment Index</title>
+		<script type="text/javascript" src="data.js"></script>
+		<script type="text/javascript" src="moment.js"></script>
+		<script type="text/javascript" src="Chart.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="styles.css" />
+	</head>
+	<body>
+		<h1>Trump Unemployment Index</h1>
+		<canvas id="chartCanvas" width="600" height="200"></canvas>
+		<div id="tipHolder">
+			<span id="tipLocation"></span>
+			<span id="tipRate"></span>
+			<span id="tipDate"></span>
+			<span id="tipContent"></span>
+		</div>
+		<script>
+			// FILTER AND CONVERT DATA FOR CONSUMPTION
+			// dataFile is set in data.json
+			var federalChartData = dataFile.filter((obj) => obj.fed_unemployment !== null).map((obj) => {
+				return { x: obj.date, y: obj.fed_unemployment }
+			})
+			// We will use trumpData for quotes etc. later so lets store the result of this filter
+			var trumpData = dataFile.filter((obj) => obj.trump_unemployment !== null)
+			var trumpChartData = trumpData.map((obj) => {
+				return { x: obj.date, y: obj.trump_unemployment }
+			})
+
+			// DRAW THE CHART
+			var ctx = document.getElementById("chartCanvas")
+			var scatterChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					datasets: [{
+						label: 'Federal Unemployment Index',
+						data: federalChartData
+					}, {
+						label: 'Trump Unemployment Index',
+						data: trumpChartData,
+
+						fill: false,
+						// lineTension: 0.3,
+						// borderJoinStyle: 'miter',
+						// borderDash: [],
+						backgroundColor: "rgba(75,192,192,0.4)",
+						borderColor: "rgba(75,192,192,1)",
+						borderCapStyle: 'butt',
+						borderDashOffset: 0.0,
+						pointBorderColor: "rgba(75,192,192,1)",
+						pointBackgroundColor: "#fff",
+						pointBorderWidth: 5,
+						pointHoverRadius: 5,
+						pointHoverBackgroundColor: "rgba(183,230,230,1)",
+						pointHoverBorderColor: "rgba(75,192,192,1)",
+						pointHoverBorderWidth: 3,
+						pointRadius: 1,
+						// really high makes it basically always be hitting something
+						pointHitRadius: 250,
+					}]
+				},
+				options: {
+					scales: {
+						xAxes: [{
+							type: 'time'
+						}],
+						yAxes: [{
+							ticks: {
+								max: 45
+							}
+						}]
+					},
+					hover: {
+						mode: 'nearest',
+						onHover: (event, chartElement) => {
+							// BUILD THE TOOLTIP
+							// console.log(event)
+							// console.log(chartElement)
+							// console.log(chartElement[0]._index)
+							if (chartElement.length > 0 && chartElement[0]._datasetIndex == 1)
+							{
+								var thisdata = trumpData[chartElement[0]._index]
+								document.getElementById("tipLocation").innerHTML =  thisdata.trump_location
+								document.getElementById("tipContent").innerHTML =  thisdata.trump_quote
+								document.getElementById("tipDate").innerHTML =  moment(thisdata.date).format("dddd, MMMM Do YYYY")
+								document.getElementById("tipRate").innerHTML =  thisdata.trump_unemployment
+							}
+						}
+					},
+					tooltips: {
+						enabled: false
+					}
+				}
+			});
+		</script>
+	</body>
+</html>
